@@ -7,7 +7,7 @@ A NodeJS tool to generate a key pair, a CSR locally, sign it using the HashiCorp
    - Access to AWS SSM (Parameter Store) and permissions for ACM certificate import
 
 ### Build
-Build by running `npm --save install`
+Build by running `npm install`
 
 ### Configuration
 Provide the following configuration options in config.js
