@@ -24,3 +24,6 @@ Provide the following configuration options in config.js
    - Run with `node app.js commonName [existingAcmCertArn]`
        - Where commonName is the domain name of the cert to be signed
        - existingAcmCertArn - [OPTIONAL] specify this when re-importing or re-newing a cert
+       
+### How to run on Lambda
+Coming soon.
