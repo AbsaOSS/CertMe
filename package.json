@@ -1,5 +1,5 @@
 {
-  "name": "hashivault-cert-acm",
+  "name": "certme",
   "version": "0.0.1",
   "description": "A tool to generate a key pair, a CSR, authenticate to a HashiCorp Vault using AppRole, sigh the CSR and (re-)import it into ACM",
   "main": "app.js",

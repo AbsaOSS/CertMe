@@ -1,4 +1,4 @@
-## CertAlready
+## CertMe
 A NodeJS tool to generate a key pair, a CSR locally, sign it using the HashiCorp Vault and import the signed certificate into AWS ACM
 
 ### Requirements
