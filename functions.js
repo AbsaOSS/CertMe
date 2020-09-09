@@ -20,7 +20,7 @@ const rp = require('request-promise');
 const oPath = require('path');
 const config = require( oPath.resolve( __dirname, "./config.js" ) );
 
-const acm = new AWS.ACM({ apiVersion: 'latest' });
+const acm = new AWS.ACM();
 const ssm = new AWS.SSM();
 
 async function hashiAuth(sRoleId, sSecretId) {
