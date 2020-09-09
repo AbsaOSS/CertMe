@@ -57,6 +57,4 @@ const oFunctions = require( oPath.resolve( __dirname, "./functions.js" ) );
     console.log("Usage: node app.js commonName [existingCertARN]")
   }
 
-
 })()
-

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 const AWS = require('aws-sdk');
 const RSA = require('rsa-compat').RSA;
 const rp = require('request-promise');
