@@ -24,7 +24,6 @@ AWS.config.update({region: 'REPLACE-WITH-DESIRED-REGION'});
 module.exports = {
     hashicorpVaultServer: "https://vault-nonprod.your-org.com",
     mountPoint: "certificate_authority/sign/your-vault-space",
-    teamCode: "yourAWSTeamCode",
     certLength: 2048,
     ssmRoleIdParameterName: "/yourAWSTeamCode/hashicorp-vault-role-id", // store the Hashicorp Role ID in the SSM Parameter Store as Secret String
     ssmSecretIdParameterName: "/yourAWSTeamCode/hashicorp-vault-secret-id" // store the Hashicorp Secret ID in the SSM Parameter Store as Secret String

@@ -20,7 +20,7 @@ const rp = require('request-promise');
 const oPath = require('path');
 const config = require( oPath.resolve( __dirname, "./config.js" ) );
 
-const acm = new AWS.ACM();
+const acm = new AWS.ACM({ apiVersion: 'latest' });
 const ssm = new AWS.SSM();
 
 async function hashiAuth(sRoleId, sSecretId) {
@@ -70,12 +70,7 @@ async function importCert(sCert, sPrivateKey, sCAChain, sCertArn) {
       CertificateChain: Buffer.from(sCAChain),
   };
 
-  if(!sCertArn) {
-    params.Tags = [ {
-      Key: 'TeamCode',
-      Value: config.teamCode
-    }]
-  } else {
+  if(sCertArn) {
     params.CertificateArn = sCertArn;
   }
 
