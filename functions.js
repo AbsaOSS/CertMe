@@ -17,113 +17,114 @@
 const AWS = require('aws-sdk');
 const RSA = require('rsa-compat').RSA;
 const rp = require('request-promise');
-const config = require("./config.js");
+
+const oPath = require('path');
+const config = require( oPath.resolve( __dirname, "./config.js" ) );
 
 const acm = new AWS.ACM();
 const ssm = new AWS.SSM();
 
 async function hashiAuth(sRoleId, sSecretId) {
-	var options = {
-			method: 'POST',
-			uri: `${config.hashicorpVaultServer}/v1/auth/approle/login`,
-			strictSSL: false,
-			body: {
-				"role_id": sRoleId,
-				"secret_id": sSecretId 
-			},
-			json: true
-	};
+  var options = {
+      method: 'POST',
+      uri: `${config.hashicorpVaultServer}/v1/auth/approle/login`,
+      strictSSL: false,
+      body: {
+        "role_id": sRoleId,
+        "secret_id": sSecretId 
+      },
+      json: true
+  };
 
-	return rp(options)
-	.then(function (parsedBody) {  
-		return parsedBody.auth;
-	})
-	.catch(function (err) {
-		console.log(err)
-	});
+  return rp(options)
+  .then(function (parsedBody) {  
+    return parsedBody.auth;
+  })
+  .catch(function (err) {
+    console.log(err)
+  });
 }
 
 async function signCSR(csr, cn, token) {
-	var options = {
-			method: 'POST',
-			uri: `${config.hashicorpVaultServer}/v1/${config.mountPoint}`,
-			strictSSL: false,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			body: {
-				"csr": csr,
-				"common_name": cn,
-			},
-			json: true
-	};
+  var options = {
+      method: 'POST',
+      uri: `${config.hashicorpVaultServer}/v1/${config.mountPoint}`,
+      strictSSL: false,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        "csr": csr,
+        "common_name": cn,
+      },
+      json: true
+  };
 
-	return rp(options)
+  return rp(options)
 }
 
 async function importCert(sCert, sPrivateKey, sCAChain, sCertArn) {
-	
-	const params = {
-			Certificate: Buffer.from(sCert),
-			PrivateKey: Buffer.from(sPrivateKey),
-			CertificateChain: Buffer.from(sCAChain),
-	};
-	
-	if(!sCertArn) {
-		params.Tags = [ {
-			Key: 'TeamCode',
-			Value: config.teamCode
-		}]
-	} else {
-		params.CertificateArn = sCertArn;
-	}
-	
-	return acm.importCertificate(params).promise();
+
+  const params = {
+      Certificate: Buffer.from(sCert),
+      PrivateKey: Buffer.from(sPrivateKey),
+      CertificateChain: Buffer.from(sCAChain),
+  };
+
+  if(!sCertArn) {
+    params.Tags = [ {
+      Key: 'TeamCode',
+      Value: config.teamCode
+    }]
+  } else {
+    params.CertificateArn = sCertArn;
+  }
+
+  return acm.importCertificate(params).promise();
 }
 
 async function getSSMSecretString(sName) {
-	
-	console.log("Getting the value of secret parameter", sName)
-	
-	var params = {
-			Name: sName, 
-			WithDecryption: true
-	};
-	
-	return ssm.getParameter(params).promise().then((oRes) => {
-		return oRes.Parameter.Value
-	});
+
+  console.log("Getting the value of secret parameter", sName)
+
+  var params = {
+    Name: sName, 
+    WithDecryption: true
+  };
+
+  return ssm.getParameter(params).promise().then((oRes) => {
+    return oRes.Parameter.Value
+  });
 }
 
 function getRoleId() {
-	return getSSMSecretString(config.ssmRoleIdParameterName)
+  return getSSMSecretString(config.ssmRoleIdParameterName)
 }
 function getSecretId() {
-	return getSSMSecretString(config.ssmSecretIdParameterName)
+  return getSSMSecretString(config.ssmSecretIdParameterName)
 }
 
 async function generateKeyPair() {
-	return new Promise(function(done){
-		RSA.generateKeypair({
-			certLength: config.certLength
-		}, function (err, keypair) { 
-			return done(keypair) 
-		});
-	})
+  return new Promise(function(done){
+    RSA.generateKeypair({
+      certLength: config.certLength
+    }, function (err, keypair) { 
+      return done(keypair) 
+    });
+  })
 }
 
 function generateCsrPem(oKeyPair, sCn) {
-	return RSA.generateCsrPem(oKeyPair, [ sCn ]);
+  return RSA.generateCsrPem(oKeyPair, [ sCn ]);
 }
 
 module.exports = {
-		hashiAuth: hashiAuth,
-		signCSR: signCSR,
-		importCert: importCert,
-		getSSMSecretString: getSSMSecretString,
-		generateKeyPair: generateKeyPair,
-		generateCsrPem: generateCsrPem,
-		getRoleId: getRoleId,
-		getSecretId: getSecretId,
+    hashiAuth: hashiAuth,
+    signCSR: signCSR,
+    importCert: importCert,
+    getSSMSecretString: getSSMSecretString,
+    generateKeyPair: generateKeyPair,
+    generateCsrPem: generateCsrPem,
+    getRoleId: getRoleId,
+    getSecretId: getSecretId,
 }
-	
