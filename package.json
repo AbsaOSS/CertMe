@@ -1,0 +1,15 @@
+{
+  "name": "certme",
+  "version": "0.0.1",
+  "description": "A tool to generate a key pair, a CSR, authenticate to a HashiCorp Vault using AppRole, sigh the CSR and (re-)import it into ACM",
+  "main": "app.js",
+  "scripts": {},
+  "author": "Big Data R&D, Absa",
+  "license": "Apache 2",
+  "dependencies": {
+    "aws-sdk": "^2.568.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "rsa-compat": "^2.0.8"
+  }
+}
