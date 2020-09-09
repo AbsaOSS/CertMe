@@ -20,9 +20,17 @@ Provide the following configuration options in config.js
 
 ### How to run locally
    - Assumes valid AWS credentials stored in the default profile
-   - Run with `node app.js commonName [existingAcmCertArn]`
+   - Run with `node app.js commonName "[existingAcmCertArn]"`
        - Where commonName is the domain name of the cert to be signed
        - existingAcmCertArn - [OPTIONAL] specify this when re-importing or re-newing a cert
-       
+
+#### Information Returned
+   - Hashicorp Auth Token
+   - Keypair used to generate the CSR
+   - Generated CSR in the PEM format
+   - CA Chain of the signed certificate in the PEM format 
+   - Signed certificate in the PEM format
+   - The ARN of the (re-)imported ACM certificate
+
 ### How to run on Lambda
 Coming soon.
