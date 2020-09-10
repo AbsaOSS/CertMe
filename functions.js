@@ -112,6 +112,43 @@ function generateCsrPem(oKeyPair, sCn) {
   return RSA.generateCsrPem(oKeyPair, [ sCn ]);
 }
 
+async function generateAndImport(cn, existingArn){
+  console.log("Generating a certificate for common name and using existing ARN", cn, existingArn)
+
+  const sRoleId = await getRoleId();
+  const sSecretId = await getSecretId();
+
+  const authTokenRes = await hashiAuth(sRoleId, sSecretId)
+  const clientToken = authTokenRes.client_token;
+
+  console.log("Hashicorp Auth Token", clientToken)
+
+  console.log("Generating Key Pair")
+  const keyPair = await generateKeyPair()
+  console.log(keyPair)
+
+  console.log("Generating CSR")
+  const csr = generateCsrPem(keyPair, cn)
+  console.log(csr)
+
+  console.log("Signing the CSR:\n")
+
+  const signRes = await signCSR(csr, cn, clientToken)
+  console.log("CA CHAIN:\n", signRes.data.ca_chain.join("\n"))
+  console.log("\nSigned CERTIFICATE:\n", signRes.data.certificate)
+
+  console.log("Importing certificate")
+
+  const importRes = await importCert(signRes.data.certificate, keyPair.privateKeyPem, signRes.data.ca_chain.join("\n"), existingArn);
+  const importedArn = importRes.CertificateArn;
+
+  console.log("Imported cert ARN", importedArn)
+  
+  return new Promise(function(done){
+    return done(importedArn)
+  });
+}
+
 module.exports = {
     hashiAuth: hashiAuth,
     signCSR: signCSR,
@@ -121,4 +158,5 @@ module.exports = {
     generateCsrPem: generateCsrPem,
     getRoleId: getRoleId,
     getSecretId: getSecretId,
+    generateAndImport: generateAndImport,
 }

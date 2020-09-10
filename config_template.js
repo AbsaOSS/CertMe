@@ -14,10 +14,15 @@
  */
 
 const AWS = require('aws-sdk');
+const proxy = require('proxy-agent');
 
 AWS.config.apiVersions = {
     acm: '2015-12-08'
 };
+
+AWS.config.update({
+  httpOptions: { agent: proxy('http://your-proxy:8080') }
+});
 
 AWS.config.update({region: 'REPLACE-WITH-DESIRED-REGION'});
 

@@ -16,16 +16,13 @@
 const oPath = require('path');
 const oFunctions = require( oPath.resolve( __dirname, "./functions.js" ) );
 
-(async function main() {
-  const params = process.argv.slice(2)
-  if(params.length >= 1) {
-    const cn = params[0]
-    const existingArn = params.length > 1 ? params[1] : undefined;
+exports.handler = async (oEvent) => {
+  console.log('Received event:', JSON.stringify(oEvent, null, 2));
 
-    await oFunctions.generateAndImport(cn, existingArn);
-
+  if(oEvent && oEvent.cn) {
+    return oFunctions.generateAndImport(oEvent.cn, oEvent.existingArn);
   } else {
-    console.log("Usage: node app.js commonName [existingCertARN]")
+    throw new Error("The event object should contain a string attribute 'cn' " + 
+        "specifying the common name and optionally 'existingArn' attribute for re-imports")
   }
-
-})()
+}
