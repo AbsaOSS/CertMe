@@ -22,7 +22,7 @@ const oFunctions = require( oPath.resolve( __dirname, "./functions.js" ) );
     const cn = params[0]
     const existingArn = params.length > 1 ? params[1] : undefined;
 
-    await oFunctions.generateAndImport(cn, existingArn);
+    return oFunctions.generateAndImport(cn, existingArn);
 
   } else {
     console.log("Usage: node app.js commonName [existingCertARN]")
