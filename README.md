@@ -17,6 +17,7 @@ Provide the following configuration options in config.js
    - *ssmRoleIdParameterName* - the name of secret string parameter in SSM Parameter Store, which includes the Role ID (e.g. /myAWSTeam/myVaultRoleId)
    - *ssmSecretIdParameterName* - the name of secret string parameter in SSM Parameter Store, which includes the Secret ID (e.g. /myAWSTeam/myVaultSecretId)
    - Configure the desired AWS region
+   - Configure the proxy
 
 ### How to run locally
    - Assumes valid AWS credentials stored in the default profile
@@ -33,4 +34,10 @@ Provide the following configuration options in config.js
    - The ARN of the (re-)imported ACM certificate
 
 ### How to run on Lambda
-Coming soon.
+   - Run the build and specify the required configuration parameters in config.js
+   - The zipped contents of the built project can be uploaded into Lambda through S3 or Terraform
+   - Specify the Lambda handler as `lambda.handler`
+   - Set a reasonable timeout, the average runtime on Lambda is 10s, 1 min timeout may be reasonable
+   - Run using a Lambda execution role with `acm:ImportCertificate` and KMS permissions
+   - The event object is expected in this format `{ "cn": "myapp.abc.com", "existingArn": "arn:aws:acm:eu-west-1:...."}`
+        - Where existingArn is optional for certificate re-imports and renewals
