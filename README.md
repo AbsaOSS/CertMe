@@ -16,6 +16,7 @@ Provide the following configuration options in config.js
    - *certLength* - the length of the certificate (e.g. 2048)
    - *ssmRoleIdParameterName* - the name of secret string parameter in SSM Parameter Store, which includes the Role ID (e.g. /myAWSTeam/myVaultRoleId)
    - *ssmSecretIdParameterName* - the name of secret string parameter in SSM Parameter Store, which includes the Secret ID (e.g. /myAWSTeam/myVaultSecretId)
+   - *debug* - if set to true, the tool writes all outputs including the private key and the signed certificate into the console
    - Configure the desired AWS region
    - Configure the proxy
 

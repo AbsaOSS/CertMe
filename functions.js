@@ -121,21 +121,32 @@ async function generateAndImport(cn, existingArn){
   const authTokenRes = await hashiAuth(sRoleId, sSecretId)
   const clientToken = authTokenRes.client_token;
 
-  console.log("Hashicorp Auth Token", clientToken)
+  if(config.debug) {
+    console.log("Hashicorp Auth Token", clientToken)
+  }
 
   console.log("Generating Key Pair")
   const keyPair = await generateKeyPair()
-  console.log(keyPair)
+  
+  if(config.debug) {
+    console.log(keyPair)
+  }
 
   console.log("Generating CSR")
   const csr = generateCsrPem(keyPair, cn)
-  console.log(csr)
+
+  if(config.debug) {
+    console.log(csr)
+  }
 
   console.log("Signing the CSR:\n")
 
   const signRes = await signCSR(csr, cn, clientToken)
-  console.log("CA CHAIN:\n", signRes.data.ca_chain.join("\n"))
-  console.log("\nSigned CERTIFICATE:\n", signRes.data.certificate)
+
+  if(config.debug) {
+    console.log("CA CHAIN:\n", signRes.data.ca_chain.join("\n"))
+    console.log("\nSigned CERTIFICATE:\n", signRes.data.certificate)
+  }
 
   console.log("Importing certificate")
 
@@ -143,7 +154,7 @@ async function generateAndImport(cn, existingArn){
   const importedArn = importRes.CertificateArn;
 
   console.log("Imported cert ARN", importedArn)
-  
+
   return new Promise(function(done){
     return done(importedArn)
   });
