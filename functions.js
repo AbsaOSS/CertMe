@@ -134,7 +134,7 @@ async function generateAndImport(cn, existingArn){
 
   console.log("Generating CSR")
   const csr = generateCsrPem(keyPair, cn)
-  
+
   if(config.debug) {
     console.log(csr)
   }
@@ -142,7 +142,7 @@ async function generateAndImport(cn, existingArn){
   console.log("Signing the CSR:\n")
 
   const signRes = await signCSR(csr, cn, clientToken)
-  
+
   if(config.debug) {
     console.log("CA CHAIN:\n", signRes.data.ca_chain.join("\n"))
     console.log("\nSigned CERTIFICATE:\n", signRes.data.certificate)
@@ -154,7 +154,7 @@ async function generateAndImport(cn, existingArn){
   const importedArn = importRes.CertificateArn;
 
   console.log("Imported cert ARN", importedArn)
-  
+
   return new Promise(function(done){
     return done(importedArn)
   });
