@@ -91,6 +91,24 @@ async function getSSMSecretString(sName) {
   });
 }
 
+async function putSSMSecretString(sName, sValue) {
+
+  console.log("Storing the secret parameter", sName)
+
+  var params = {
+    Name: sName,
+    Value: sValue,
+    Overwrite: true,
+    Type: "SecureString",
+    KeyId: config.ssmSecureParameterKMSKeyId,
+    Tier: "Advanced"
+  };
+
+  return ssm.putParameter(params).promise().then((oRes) => {
+    return oRes.data
+  });
+}
+
 function getRoleId() {
   return getSSMSecretString(config.ssmRoleIdParameterName)
 }
@@ -149,11 +167,19 @@ async function generateAndImport(cn, existingArn){
   }
 
   console.log("Importing certificate")
-
   const importRes = await importCert(signRes.data.certificate, keyPair.privateKeyPem, signRes.data.ca_chain.join("\n"), existingArn);
   const importedArn = importRes.CertificateArn;
-
   console.log("Imported cert ARN", importedArn)
+
+  const sOutputSSMParamName = `${config.ssmOutputParameterNamePrefix}/${cn}`;
+  console.log("Storing the output into SSM Parameter Store as", sOutputSSMParamName)
+  const ssmImportRes = await putSSMSecretString(sOutputSSMParamName, JSON.stringify({
+    cn: cn,
+    privateKey: keyPair.privateKeyPem,
+    caChain: signRes.data.ca_chain.join("\n"),
+    signedCertificate: signRes.data.certificate
+  }));
+  console.log("Stored the ouput into SSM", ssmImportRes);
 
   return new Promise(function(done){
     return done(importedArn)

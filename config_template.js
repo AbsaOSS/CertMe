@@ -32,5 +32,7 @@ module.exports = {
     certLength: 2048,
     ssmRoleIdParameterName: "/yourAWSTeamCode/hashicorp-vault-role-id", // store the Hashicorp Role ID in the SSM Parameter Store as Secret String
     ssmSecretIdParameterName: "/yourAWSTeamCode/hashicorp-vault-secret-id", // store the Hashicorp Secret ID in the SSM Parameter Store as Secret String
+    ssmOutputParameterNamePrefix: "/yourAWSTeamCode/CertMeOutput", // prefix of the SSM parameter, to which the output (private key, CA chain and the signed certificate) is stored
+    ssmSecureParameterKMSKeyId: "arn:aws:kms:...", // the KMS key ID used to encrypt the output SecretString in SSM parameter store
     debug: false  //if set to true, all the outputs including secrets such as the private key are written to the console
 }

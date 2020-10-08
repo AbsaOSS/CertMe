@@ -1,10 +1,12 @@
 ## CertMe
-A NodeJS tool to generate a key pair, a CSR locally, sign it using the HashiCorp Vault and import the signed certificate into AWS ACM
+A NodeJS tool to generate a key pair, a CSR locally, sign it using the HashiCorp Vault and import the signed certificate into AWS ACM and as 
+SecretString (along with the private key and the CA chain) into SSM parameter store.
 
 ### Requirements
    - NodeJS
    - Access to the HashiCorp Vault (namely the role ID, secret ID, and the mount point)
    - Access to AWS SSM (Parameter Store) and permissions for ACM certificate import
+   - KMS Key ID used to encrypt SecretString output in SSM
 
 ### Build
 Build by running `npm install`
@@ -16,6 +18,9 @@ Provide the following configuration options in config.js
    - *certLength* - the length of the certificate (e.g. 2048)
    - *ssmRoleIdParameterName* - the name of secret string parameter in SSM Parameter Store, which includes the Role ID (e.g. /myAWSTeam/myVaultRoleId)
    - *ssmSecretIdParameterName* - the name of secret string parameter in SSM Parameter Store, which includes the Secret ID (e.g. /myAWSTeam/myVaultSecretId)
+   - *ssmOutputParameterNamePrefix* - the prefix of the secret parameter in SSM, where the output (private key, CA chain and the signed certificate all in PEM format)
+    will be stored. The actual parameter name will contain the CN appended to this prefix
+   - *ssmSecureParameterKMSKeyId* - the ID of the KMS Key to be used in encrypting the output SecretString
    - *debug* - if set to true, the tool writes all outputs including the private key and the signed certificate into the console
    - Configure the desired AWS region
    - Configure the proxy
