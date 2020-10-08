@@ -31,5 +31,6 @@ module.exports = {
     mountPoint: "certificate_authority/sign/your-vault-space",
     certLength: 2048,
     ssmRoleIdParameterName: "/yourAWSTeamCode/hashicorp-vault-role-id", // store the Hashicorp Role ID in the SSM Parameter Store as Secret String
-    ssmSecretIdParameterName: "/yourAWSTeamCode/hashicorp-vault-secret-id" // store the Hashicorp Secret ID in the SSM Parameter Store as Secret String
+    ssmSecretIdParameterName: "/yourAWSTeamCode/hashicorp-vault-secret-id", // store the Hashicorp Secret ID in the SSM Parameter Store as Secret String
+    debug: false  //if set to true, all the outputs including secrets such as the private key are written to the console
 }
