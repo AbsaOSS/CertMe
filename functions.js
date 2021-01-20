@@ -171,18 +171,23 @@ async function generateAndImport(cn, existingArn){
   const importedArn = importRes.CertificateArn;
   console.log("Imported cert ARN", importedArn)
 
-  const sOutputSSMParamName = `${config.ssmOutputParameterNamePrefix}/${cn}`;
-  console.log("Storing the output into SSM Parameter Store as", sOutputSSMParamName)
-  const ssmImportRes = await putSSMSecretString(sOutputSSMParamName, JSON.stringify({
-    cn: cn,
-    privateKey: keyPair.privateKeyPem,
-    caChain: signRes.data.ca_chain.join("\n"),
-    signedCertificate: signRes.data.certificate
-  }));
-  console.log("Stored the ouput into SSM", ssmImportRes);
+  const sOutputSSMParamNamePK = `${config.ssmOutputParameterNamePrefix}/${cn}/privateKey`;
+  const sOutputSSMParamNameCAChain = `${config.ssmOutputParameterNamePrefix}/${cn}/caChain`;
+  const sOutputSSMParamNameSignedCert = `${config.ssmOutputParameterNamePrefix}/${cn}/signedCert`;
+  console.log("Storing the output into SSM Parameter Store as", sOutputSSMParamNamePK, sOutputSSMParamNameCAChain, sOutputSSMParamNameSignedCert);
+  const ssmImportResPK = await putSSMSecretString(sOutputSSMParamNamePK, keyPair.privateKeyPem)
+  const ssmImportResCAChain = await putSSMSecretString(sOutputSSMParamNameCAChain, signRes.data.ca_chain.join("\n"))
+  const ssmImportResSignedCert = await putSSMSecretString(sOutputSSMParamNameSignedCert, signRes.data.certificate)
+
+  console.log("Stored the ouput into SSM", ssmImportResPK, ssmImportResCAChain, ssmImportResSignedCert);
 
   return new Promise(function(done){
-    return done(importedArn)
+    return done({
+      ACMCertArn: importedArn,
+      SSMPKParamName: sOutputSSMParamNamePK,
+      SSMCAChainParamName: sOutputSSMParamNameCAChain,
+      SSMSignedCertParamName: sOutputSSMParamNameSignedCert
+    })
   });
 }
 
